@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hashlogger-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hashlogger
+  template:
+    metadata:
+      labels:
+        app: hashlogger
+    spec:
+      containers:
+        - name: hashlogger
+          image: pavelgar/hashlogger:latest
