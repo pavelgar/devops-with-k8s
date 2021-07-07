@@ -13,5 +13,5 @@ spec:
         app: todo-app
     spec:
       containers:
-        - name: todo_app
+        - name: todo-app
           image: pavelgar/todo_app:latest
