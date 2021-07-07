@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: todo_app-dep
+  name: todo-app-dep
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: todo_app
+      app: todo-app
   template:
     metadata:
       labels:
-        app: todo_app
+        app: todo-app
     spec:
       containers:
         - name: todo_app
