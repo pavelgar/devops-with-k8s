@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hashlogger-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/rule-type: "PathPrefixStrip"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hashlogger-svc
+          servicePort: 2345
+      - path: /pingpong
+        backend:
+          serviceName: ping-svc
+          servicePort: 3456
