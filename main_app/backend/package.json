@@ -1,0 +1,11 @@
+{
+  "name": "main-app-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Pavel Garmuyev",
+  "license": "ISC"
+}

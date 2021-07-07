@@ -1,5 +1,5 @@
 {
-  "name": "main-app",
+  "name": "main-app-frontend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,6 +9,6 @@
   "author": "Pavel Garmuyev",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "koa": "^2.13.1"
   }
 }
