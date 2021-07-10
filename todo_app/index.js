@@ -34,7 +34,7 @@ const fetchNewPic = async () => {
     picLastUpdated = new Date(fs.readFileSync(lastFetchedPath))
   } catch {
     picLastUpdated = new Date()
-    fs.writeFileSync(lastFetchedPath, picLastUpdated)
+    fs.writeFileSync(lastFetchedPath, "" + picLastUpdated)
   }
   const now = new Date()
   if (!sameDay(picLastUpdated, now)) {
