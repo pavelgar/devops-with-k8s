@@ -12,6 +12,12 @@ spec:
       labels:
         app: todo-app
     spec:
+      volumes:
+        - name: todo-volume
+          emptyDir: {}
       containers:
         - name: todo-app
           image: pavelgar/todo_app:latest
+          volumeMounts:
+          - name: todo-volume
+            mountPath: /usr/src/app/files
