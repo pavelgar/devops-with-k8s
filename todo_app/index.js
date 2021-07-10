@@ -21,25 +21,27 @@ const removeFile = async () =>
 const makeDir = async () =>
   new Promise((res) => fs.mkdir(directory, (err) => res()))
 
-const getPic = async () =>
-  await axios.get("https://picsum.photos/1200", {
-    responseType: "stream",
-  })
+const fetchNewPic = async (current) => {
+  const now = new Date()
+  if (!current || !sameDay(current, now)) {
+    await removeFile() // Remove old file, if exists
+    await makeDir() // Create the dir, if doesn't exist
+    const response = await axios.get("https://picsum.photos/200", {
+      responseType: "stream",
+    })
+    response.data.pipe(fs.createWriteStream(dailyPicPath))
+  }
+}
 
-const fetchNewPic = async () => {
+const updatePic = async () => {
   let picLastUpdated = null
   try {
     picLastUpdated = new Date(fs.readFileSync(lastFetchedPath))
+    fetchNewPic(picLastUpdated)
   } catch {
+    fetchNewPic(null)
     picLastUpdated = new Date()
     fs.writeFileSync(lastFetchedPath, "" + picLastUpdated)
-  }
-  const now = new Date()
-  if (!sameDay(picLastUpdated, now)) {
-    await removeFile() // Remove old file, if exists
-    await makeDir() // Create the dir, if doesn't exist
-    const response = await getPic() // Get a new picture
-    response.data.pipe(fs.createWriteStream(dailyPicPath)) // Save the picture
   }
 }
 
@@ -47,7 +49,7 @@ app.use(express.static(directory))
 
 app.get("/", async (req, res) => {
   // Get a new image
-  await fetchNewPic()
+  await updatePic()
   // Send response
   res.sendFile(path.join(__dirname, "/index.html"))
 })
