@@ -34,5 +34,5 @@ spec:
             - name: shared-hash
               mountPath: /usr/src/app/files
             - name: envs
-              mountPath: /usr/src/app
+              mountPath: /usr/src/app/envs
               readOnly: true
