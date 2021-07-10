@@ -8,7 +8,7 @@
   </head>
   <body>
     <img src="./pic.jpg" alt="Daily pic!" /><br />
-    <form action="./todos" method="POST">
+    <form action="/api/todos" method="POST">
       <label for="todo">New todo</label>
       <input type="text" id="todo" name="todo" maxlength="140" />
       <input type="submit" value="Add" />
@@ -16,7 +16,7 @@
     <ul id="todo-list"></ul>
     <script>
       let todoList = document.getElementById("todo-list")
-      fetch("./todos")
+      fetch("/api/todos")
         .then((res) => res.json())
         .then((data) =>
           todoList.append(
