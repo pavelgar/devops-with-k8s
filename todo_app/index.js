@@ -1,11 +1,9 @@
-const Koa = require("koa")
-const serve = require("koa-static")
+const express = require("express")
 const path = require("path")
 const fs = require("fs")
 const axios = require("axios")
 
-const app = new Koa()
-
+const app = express()
 const PORT = process.env.PORT || 3000
 
 const directory = path.join("/", "usr", "src", "app", "files")
@@ -45,29 +43,15 @@ const fetchNewPic = async () => {
   }
 }
 
-app.use(serve(directory))
-app.use(async (ctx) => {
-  if (ctx.path.includes("favicon.ico")) return
+app.use(express.static(directory))
+
+app.get("/", async (req, res) => {
   // Get a new image
-  fetchNewPic()
+  await fetchNewPic()
   // Send response
-  ctx.body = `
-  <!DOCTYPE html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8" />
-      <title>Todo App</title>
-      <!-- <link rel="stylesheet" href="style.css" /> -->
-      <!-- <script src="script.js"></script> -->
-    </head>
-    <body>
-      <h1>Hello, World!</h1>
-      <img src="./pic.jpg" alt="Daily pic!">
-    </body>
-  </html>
-  `
-  ctx.status = 200
+  res.sendFile(path.join(__dirname, "/index.html"))
 })
 
-fetchNewPic()
-app.listen(PORT)
+app.listen(PORT, () => {
+  console.log(`Server started in port ${PORT}`)
+})
