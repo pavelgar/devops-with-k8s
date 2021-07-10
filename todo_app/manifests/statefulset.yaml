@@ -33,7 +33,7 @@ spec:
           image: postgres:13
           envFrom:
             - secretRef:
-                name: postgres-pass
+                name: todo-postgres-pass
           ports:
             - name: web
               containerPort: 5432

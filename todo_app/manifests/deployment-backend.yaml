@@ -18,4 +18,4 @@ spec:
           image: pavelgar/todo_app-backend:latest
           envFrom:
             - secretRef:
-                name: postgres-pass
+                name: todo-postgres-pass
