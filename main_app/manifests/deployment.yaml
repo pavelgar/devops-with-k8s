@@ -13,20 +13,26 @@ spec:
       labels:
         app: hashlogger
     spec:
-      volumes: # Define volume
+      volumes: # Define volumes
         - name: shared-hash
           persistentVolumeClaim:
             claimName: hashlogger-claim
+        - name: envs
+          configMap:
+            name: main-app-configmap
 
-      containers:
+      containers: # Define containers
         - name: hashlogger-backend
           image: pavelgar/hashlogger-backend:latest
-          volumeMounts: # Mount volume
+          volumeMounts: # Mount volumes
             - name: shared-hash
               mountPath: /usr/src/app/files
 
         - name: hashlogger-frontend
           image: pavelgar/hashlogger-frontend:latest
-          volumeMounts: # Mount volume
+          volumeMounts: # Mount volumes
             - name: shared-hash
               mountPath: /usr/src/app/files
+            - name: envs
+              mountPath: /usr/src/app
+              readOnly: true
