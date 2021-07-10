@@ -9,8 +9,8 @@ const app = new Koa()
 const PORT = process.env.PORT || 3000
 
 const directory = path.join("/", "usr", "src", "app", "files")
+const lastFetchedPath = path.join(directory, "pic_last_updated.txt")
 const dailyPicPath = path.join(directory, "pic.jpg")
-let picLastUpdated = null
 
 const sameDay = (a, b) =>
   a.getFullYear() === b.getFullYear() &&
@@ -20,15 +20,28 @@ const sameDay = (a, b) =>
 const removeFile = async () =>
   new Promise((res) => fs.unlink(dailyPicPath, (err) => res()))
 
+const makeDir = async () =>
+  new Promise((res) => fs.mkdir(directory, (err) => res()))
+
+const getPic = async () =>
+  await axios.get("https://picsum.photos/1200", {
+    responseType: "stream",
+  })
+
 const fetchNewPic = async () => {
+  let picLastUpdated = null
+  try {
+    picLastUpdated = new Date(fs.readFileSync(lastFetchedPath))
+  } catch {
+    picLastUpdated = new Date()
+    fs.writeFileSync(lastFetchedPath, picLastUpdated)
+  }
   const now = new Date()
-  if (!picLastUpdated || !sameDay(picLastUpdated, now)) {
-    await removeFile()
-    await new Promise((res) => fs.mkdir(directory, (err) => res()))
-    const response = await axios.get("https://picsum.photos/1200", {
-      responseType: "stream",
-    })
-    response.data.pipe(fs.createWriteStream(dailyPicPath))
+  if (!sameDay(picLastUpdated, now)) {
+    await removeFile() // Remove old file, if exists
+    await makeDir() // Create the dir, if doesn't exist
+    const response = await getPic() // Get a new picture
+    response.data.pipe(fs.createWriteStream(dailyPicPath)) // Save the picture
   }
 }
 
