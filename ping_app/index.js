@@ -30,7 +30,7 @@ client
 
 app.get("/", async (req, res) => {
   const { rows } = await client.query(`SELECT n FROM Ping`)
-  let pings = parseInt(rows[0])
+  let pings = parseInt(rows[0].n)
   res.send(`pong ${pings}`)
   pings++
   await client.query(`UPDATE Ping SET n=$1`, [pings])
@@ -38,7 +38,7 @@ app.get("/", async (req, res) => {
 
 app.get("/pongs", async (req, res) => {
   const { rows } = await client.query(`SELECT n FROM Ping`)
-  res.send(rows[0])
+  res.send(rows[0].n)
 })
 
 app.listen(PORT, () => {
