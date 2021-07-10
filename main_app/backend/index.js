@@ -14,9 +14,13 @@ const genHash = () =>
   })
 
 const writeHash = async () =>
-  fs.mkdir(directory, { recursive: true }, () =>
-    fs.writeFile(filePath, genHash())
-  )
+  fs.mkdir(directory, { recursive: true }, (err) => {
+    const hash = genHash()
+    fs.writeFile(filePath, hash, (err) => {
+      if (err) throw err
+      console.log("Hash file updated!")
+    })
+  })
 
 const main = () => {
   writeHash()
