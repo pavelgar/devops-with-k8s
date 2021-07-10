@@ -12,7 +12,7 @@ const postgresPass = Buffer.from(
 ).toString("utf-8")
 
 const client = new Client({
-  host: "postgres-ss-0.default",
+  host: "postgres-svc",
   port: 5432,
   user: "postgres",
   password: postgresPass,
