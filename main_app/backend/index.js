@@ -13,29 +13,14 @@ const genHash = () =>
     return v.toString(16)
   })
 
-const fileAlreadyExists = async () =>
-  new Promise((res) => {
-    fs.stat(filePath, (err, stats) => {
-      if (err || !stats) return res(false)
-      return res(true)
-    })
-  })
+const writeHash = async () =>
+  fs.mkdir(directory, { recursive: true }, () =>
+    fs.writeFile(filePath, genHash())
+  )
 
-const createAFile = async () => {
-  if (await fileAlreadyExists()) return
-
-  await new Promise((res) => fs.mkdir(directory, (err) => res()))
-  let hash = genHash()
-  fs.writeFile(filePath, hash)
+const main = () => {
+  writeHash()
+  setTimeout(writeHash, 5000)
 }
 
-const removeFile = async () =>
-  new Promise((res) => fs.unlink(filePath, (err) => res()))
-
-createAFile()
-
-const writeHash = () => {
-  setTimeout(createAFile, 5000)
-}
-
-writeHash()
+main()
