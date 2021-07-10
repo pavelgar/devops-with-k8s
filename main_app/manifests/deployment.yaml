@@ -12,6 +12,19 @@ spec:
       labels:
         app: hashlogger
     spec:
+      volumes: # Define volume
+        - name: shared-hash
+          emptyDir: {}
+
       containers:
-        - name: hashlogger
-          image: pavelgar/hashlogger:latest
+        - name: hashlogger-backend
+          image: pavelgar/hashlogger-backend:latest
+          volumeMounts: # Mount volume
+            - name: shared-hash
+              mountPath: /usr/src/app/files
+
+        - name: hashlogger-frontend
+          image: pavelgar/hashlogger-frontend:latest
+          volumeMounts: # Mount volume
+            - name: shared-hash
+              mountPath: /usr/src/app/files
