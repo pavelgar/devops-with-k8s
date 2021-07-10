@@ -9,7 +9,6 @@
   "author": "Pavel Garmuyev",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "koa": "^2.13.1"
+    "express": "^4.17.1"
   }
 }
