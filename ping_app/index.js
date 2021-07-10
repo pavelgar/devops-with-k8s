@@ -17,7 +17,7 @@ const savePing = (n) =>
 app.use(async (ctx) => {
   if (ctx.path.includes("favicon.ico")) return
   ctx.body = `pong ${ping_count}`
-  savePing(++ping_count)
+  savePing(++ping_count + "")
 })
 
 savePing(ping_count)
