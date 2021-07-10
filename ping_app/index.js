@@ -1,13 +1,8 @@
 const express = require("express")
-const app = express()
-const PORT = process.env.PORT || 3000
-
 const { Client } = require("pg")
 
-// const postgresPass = Buffer.from(
-//   process.env.POSTGRES_PASSWORD,
-//   "base64"
-// ).toString("utf-8")
+const app = express()
+const PORT = process.env.PORT || 3000
 
 const client = new Client({
   host: "postgres-svc",
