@@ -9,13 +9,22 @@ const directory = path.join("/", "usr", "src", "app", "files")
 const filePath = path.join(directory, "pings.txt")
 let ping_count = 0
 
+try {
+  const oldCount = fs.readFileSync(filePath)
+  ping_count = parseInt(oldCount)
+} catch (error) {
+  fs.mkdirSync(directory, { recursive: true })
+  fs.writeFileSync(filePath, ping_count + "")
+}
+
 app.get("/", (req, res) => {
   res.send(`pong ${ping_count}`)
   fs.writeFileSync(filePath, ++ping_count + "")
 })
 
-fs.mkdirSync(directory, { recursive: true })
-fs.writeFileSync(filePath, ping_count + "")
+app.get("/pongs", (req, res) => {
+  res.send("" + ping_count)
+})
 
 app.listen(PORT, () => {
   console.log(`Server started in port ${PORT}`)
