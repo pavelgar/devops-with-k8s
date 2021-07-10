@@ -1,21 +1,19 @@
-require("dotenv").config({ path: "./envs/.env" })
-
 const express = require("express")
 const app = express()
 const PORT = process.env.PORT || 3000
 
 const { Client } = require("pg")
 
-const postgresPass = Buffer.from(
-  process.env.POSTGRES_PASSWORD,
-  "base64"
-).toString("utf-8")
+// const postgresPass = Buffer.from(
+//   process.env.POSTGRES_PASSWORD,
+//   "base64"
+// ).toString("utf-8")
 
 const client = new Client({
   host: "postgres-svc",
   port: 5432,
   user: "postgres",
-  password: postgresPass,
+  password: process.env.POSTGRES_PASSWORD,
   database: "postgres",
 })
 
