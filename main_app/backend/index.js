@@ -14,7 +14,7 @@ const genHash = () =>
   })
 
 const writeHash = async () =>
-  fs.mkdir(directory, { recursive: true }, (err) => {
+  await fs.mkdir(directory, { recursive: true }, (err) => {
     const hash = genHash()
     fs.writeFile(filePath, hash, (err) => {
       if (err) throw err
@@ -24,7 +24,7 @@ const writeHash = async () =>
 
 const main = () => {
   writeHash()
-  setTimeout(writeHash, 5000)
+  setTimeout(main, 5000)
 }
 
 main()
