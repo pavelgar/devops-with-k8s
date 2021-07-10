@@ -14,7 +14,8 @@ spec:
     spec:
       volumes: # Define volume
         - name: shared-hash
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: hashlogger-claim
 
       containers:
         - name: hashlogger-backend
