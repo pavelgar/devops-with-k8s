@@ -12,6 +12,14 @@ spec:
       labels:
         app: ping-pong
     spec:
+      volumes: # Define volume
+        - name: shared-hash
+          persistentVolumeClaim:
+            claimName: hashlogger-claim
+
       containers:
         - name: ping-pong
           image: pavelgar/ping-pong:latest
+          volumeMounts: # Mount volume
+            - name: shared-hash
+              mountPath: /usr/src/app/files
