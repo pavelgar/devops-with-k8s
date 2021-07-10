@@ -1,29 +1,46 @@
-const express = require("express")
-const path = require("path")
-const fs = require("fs")
+require("dotenv").config({ path: "./envs/.env" })
 
+const express = require("express")
 const app = express()
 const PORT = process.env.PORT || 3000
 
-const directory = path.join("/", "usr", "src", "app", "files")
-const filePath = path.join(directory, "pings.txt")
-let ping_count = 0
+const { Client } = require("pg")
 
-try {
-  const oldCount = fs.readFileSync(filePath)
-  ping_count = parseInt(oldCount)
-} catch (error) {
-  fs.mkdirSync(directory, { recursive: true })
-  fs.writeFileSync(filePath, ping_count + "")
-}
+const postgresPass = Buffer.from(
+  process.env.POSTGRES_PASSWORD,
+  "base64"
+).toString("utf-8")
 
-app.get("/", (req, res) => {
-  res.send(`pong ${ping_count}`)
-  fs.writeFileSync(filePath, ++ping_count + "")
+const client = new Client({
+  host: "postgres-svc.default",
+  port: 5432,
+  user: "postgres",
+  password: postgresPass,
+  database: "postgres",
+})
+
+client.connect()
+
+// Check if table already exists, otherwise create the table.
+client
+  .query(`SELECT n FROM Ping`)
+  .catch((err) =>
+    client
+      .query(`CREATE TABLE Ping(n int DEFAULT 0)`)
+      .then((res) => client.query("INSERT INTO Ping(n) VALUES($1)", [0]))
+  )
+
+app.get("/", async (req, res) => {
+  const { rows } = await client.query(`SELECT n FROM Ping`)
+  let pings = parseInt(rows[0])
+  res.send(`pong ${pings}`)
+  pings++
+  await client.query(`UPDATE Ping SET n=$1`, [pings])
 })
 
 app.get("/pongs", (req, res) => {
-  res.send("" + ping_count)
+  const { rows } = client.query(`SELECT n FROM Ping`)
+  res.send(rows[0])
 })
 
 app.listen(PORT, () => {

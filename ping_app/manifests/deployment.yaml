@@ -16,3 +16,6 @@ spec:
       containers:
         - name: ping-pong
           image: pavelgar/ping-pong:latest
+          envFrom:
+            - secretRef:
+                name: postgres-pass
