@@ -1,23 +1,25 @@
-const Koa = require("koa")
+const express = require("express")
+const axios = require("axios")
 const path = require("path")
 const fs = require("fs")
 
-const app = new Koa()
+const app = express()
 const PORT = process.env.PORT || 3000
 
 const directory = path.join("/", "usr", "src", "app", "files")
 const timestampFile = path.join(directory, "timestamp.txt")
-const pingFile = path.join(directory, "pings.txt")
 
-app.use(async (ctx) => {
-  if (ctx.path.includes("favicon.ico")) return
-
-  ctx.body =
-    fs.readFileSync(timestampFile, "utf8") +
-    "\nPing / Pongs: " +
-    fs.readFileSync(pingFile, "utf8")
-  ctx.set("Content-type", "text/plain")
-  ctx.status = 200
+app.get("/", async (req, res) => {
+  try {
+    const ts = fs.readFileSync(timestampFile, "utf8")
+    const pings_response = await axios.get("http://ping-service/pongs")
+    const pings = parseInt(pings_response.data)
+    res.send(ts + "\nPing / Pongs: " + pings)
+  } catch (error) {
+    res.status(500).send(error)
+  }
 })
 
-app.listen(PORT)
+app.listen(PORT, () => {
+  console.log(`Server started in port ${PORT}`)
+})
