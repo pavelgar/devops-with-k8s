@@ -9,16 +9,12 @@ const directory = path.join("/", "usr", "src", "app", "files")
 const filePath = path.join(directory, "pings.txt")
 let ping_count = 0
 
-const savePing = (n) =>
-  fs.writeFile(filePath, n, (err) => {
-    if (err) throw err
-  })
-
 app.use(async (ctx) => {
   if (ctx.path.includes("favicon.ico")) return
   ctx.body = `pong ${ping_count}`
-  savePing(++ping_count + "")
+  fs.writeFileSync(filePath, ++ping_count + "")
 })
 
-savePing(ping_count)
+fs.mkdirSync(directory, { recursive: true })
+fs.writeFileSync(filePath, ping_count + "")
 app.listen(PORT)
