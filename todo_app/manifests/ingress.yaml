@@ -1,6 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
+  namespace: todo-application
   name: todo-app-ingress
   annotations:
     traefik.ingress.kubernetes.io/rule-type: "PathPrefixStrip"
