@@ -37,9 +37,9 @@ const updatePic = async () => {
   let picLastUpdated = null
   try {
     picLastUpdated = new Date(fs.readFileSync(lastFetchedPath))
-    fetchNewPic(picLastUpdated)
+    await fetchNewPic(picLastUpdated)
   } catch {
-    fetchNewPic(null)
+    await fetchNewPic(null)
     picLastUpdated = new Date()
     fs.writeFileSync(lastFetchedPath, "" + picLastUpdated)
   }
