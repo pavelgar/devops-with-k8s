@@ -7,15 +7,26 @@
     <!-- <script src="script.js"></script> -->
   </head>
   <body>
-    <img src="./pic.jpg" alt="Daily pic!" />
-    <form action="/todo">
+    <img src="./pic.jpg" alt="Daily pic!" /><br />
+    <form action="./todos" method="POST">
       <label for="todo">New todo</label>
       <input type="text" id="todo" name="todo" maxlength="140" />
       <input type="submit" value="Add" />
     </form>
-    <ul>
-      <li>TODO 1</li>
-      <li>TODO 2</li>
-    </ul>
+    <ul id="todo-list"></ul>
+    <script>
+      let todoList = document.getElementById("todo-list")
+      fetch("./todos")
+        .then((res) => res.json())
+        .then((data) =>
+          todoList.append(
+            ...data.map((d) => {
+              let li = document.createElement("li")
+              li.textContent(d)
+              return li
+            })
+          )
+        )
+    </script>
   </body>
 </html>
