@@ -36,8 +36,8 @@ app.get("/", async (req, res) => {
   await client.query(`UPDATE Ping SET n=$1`, [pings])
 })
 
-app.get("/pongs", (req, res) => {
-  const { rows } = client.query(`SELECT n FROM Ping`)
+app.get("/pongs", async (req, res) => {
+  const { rows } = await client.query(`SELECT n FROM Ping`)
   res.send(rows[0])
 })
 
