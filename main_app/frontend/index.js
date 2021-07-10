@@ -11,9 +11,7 @@ const filePath = path.join(directory, "timestamp.txt")
 app.use(async (ctx) => {
   if (ctx.path.includes("favicon.ico")) return
 
-  ctx.body = await fs.readFile(filePath, (err, buffer) =>
-    err ? console.log("FAILED TO READ FILE", "--------------\n", err) : buffer
-  )
+  ctx.body = fs.readFileSync(filePath, "utf8")
   ctx.set("Content-type", "text/plain")
   ctx.status = 200
 })
