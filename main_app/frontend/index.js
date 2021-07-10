@@ -14,7 +14,6 @@ app.use(async (ctx) => {
   ctx.body = await fs.readFile(filePath, (err, buffer) =>
     err ? console.log("FAILED TO READ FILE", "--------------\n", err) : buffer
   )
-  ctx.set("Content-disposition", "attachment; filename=timestamp.txt")
   ctx.set("Content-type", "text/plain")
   ctx.status = 200
 })
