@@ -24,12 +24,20 @@ spec:
       containers: # Define containers
         - name: hashlogger-backend
           image: pavelgar/hashlogger-backend:latest
+          resource:
+            limits:
+              cpu: "150m"
+              memory: "150Mi"
           volumeMounts: # Mount volumes
             - name: shared-hash
               mountPath: /usr/src/app/files
 
         - name: hashlogger-frontend
           image: pavelgar/hashlogger-frontend:latest
+          resource:
+            limits:
+              cpu: "150m"
+              memory: "150Mi"
           volumeMounts: # Mount volumes
             - name: shared-hash
               mountPath: /usr/src/app/files

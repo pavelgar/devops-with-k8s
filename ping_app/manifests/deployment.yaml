@@ -16,6 +16,10 @@ spec:
       containers:
         - name: ping-pong
           image: pavelgar/ping-pong:latest
+          resource:
+            limits:
+              cpu: "100m"
+              memory: "100Mi"
           envFrom:
             - secretRef:
                 name: postgres-pass
