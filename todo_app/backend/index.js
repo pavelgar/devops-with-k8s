@@ -1,13 +1,15 @@
 const express = require("express")
 const { Client } = require("pg")
+const NATS = require("nats")
 
+const MAX_TODO_LEN = 140
+const PORT = process.env.PORT || 3000
+
+const nc = NATS.connect({ url: process.env.NATS_URL || "nats://nats:4222" })
 const app = express()
 
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
-
-const PORT = process.env.PORT || 3000
-const MAX_TODO_LEN = 140
 
 const client = new Client({
   host: "postgres-svc",
@@ -39,10 +41,13 @@ app
     res.json(rows)
   })
   .post(async (req, res) => {
-    const todoItem = req.body.todo
-    if (todoItem && todoItem.length <= MAX_TODO_LEN) {
-      await client.query("INSERT INTO Todos(task) VALUES($1)", [todoItem])
-      console.log("New todo item added\n" + todoItem)
+    const { todo } = req.body
+    if (todo && todo.length <= MAX_TODO_LEN) {
+      const [q] = await client.query("INSERT INTO Todos(task) VALUES($1)", [
+        todo,
+      ])
+      console.log("New todo item added:\n" + q.task)
+      nc.publish("todos", JSON.stringify(q))
       res.sendStatus(200)
     } else {
       res.sendStatus(400)
@@ -52,7 +57,12 @@ app
 app.put("/todos/:id", async (req, res) => {
   const { id } = req.params
   try {
-    await client.query("UPDATE Todos SET done = true WHERE id = $1", [id])
+    const [q] = await client.query(
+      "UPDATE Todos SET done = true WHERE id = $1",
+      [id]
+    )
+    console.log(`Todo #${id} has been marked as done!`)
+    nc.publish("todos", JSON.stringify(q))
     res.sendStatus(200)
   } catch (error) {
     res.sendStatus(400)

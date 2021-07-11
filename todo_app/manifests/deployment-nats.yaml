@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: todo-nats
+  name: todo-broadcaster-dep
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: broadcaster
+  template:
+    metadata:
+      labels:
+        app: broadcaster
+    spec:
+      containers:
+        - name: broadcaster
+          image: pavelgar/todo_app-broadcaster:latest
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+            - name: GENERIC_URL
+              value: example.com/api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: todo-nats
+  name: todo-backend-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-backend
+  template:
+    metadata:
+      labels:
+        app: todo-backend
+    spec:
+      containers:
+        - name: todo-backend
+          image: pavelgar/todo_app-backend:latest
+          env:
+            - name: NATS_URL
+              value: nats://my-nats:4222
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: todo-nats
+  name: todo-frontend-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-frontend
+  template:
+    metadata:
+      labels:
+        app: todo-frontend
+    spec:
+      containers:
+        - name: todo-frontend
+          image: pavelgar/todo_app-frontend:latest
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: monitoring-nats
+  namespace: prometheus
+  labels:
+    release: kube-prometheus-stack-1626019742
+spec:
+  selector:
+    matchLabels:
+      app: my-nats
+  endpoints:
+    - interval: 10s
+      path: /metrics
+      port: metrics
+  namespaceSelector:
+    matchNames:
+      - default
