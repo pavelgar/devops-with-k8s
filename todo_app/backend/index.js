@@ -26,6 +26,10 @@ client.query(
   )`
 )
 
+app.get("/", (req, res) => {
+  res.sendStatus(200)
+})
+
 app
   .route("/todos")
   .get(async (req, res) => {

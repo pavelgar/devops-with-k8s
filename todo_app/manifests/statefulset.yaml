@@ -10,8 +10,8 @@ spec:
   selector:
     app: postgresapp
   ports:
-  - port: 5432
-    name: web
+    - port: 5432
+      name: web
 ---
 apiVersion: apps/v1
 kind: StatefulSet
