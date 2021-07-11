@@ -56,5 +56,5 @@ myself as much as reasonably possible.
 To count number of pods created by StatefulSets in the "prometheus" namespace:
 
 ```
-count(kube_pod_info{created_by_kind="StatefulSet", namespace="prometheus"})
+scalar(count(kube_pod_info{created_by_kind="StatefulSet", namespace="prometheus"}))
 ```
