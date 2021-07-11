@@ -7,7 +7,7 @@ app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 const PORT = process.env.PORT || 3000
-const TODOS = []
+const MAX_TODO_LEN = 140
 
 const client = new Client({
   host: "postgres-svc",
@@ -19,14 +19,11 @@ const client = new Client({
 
 client.connect()
 
-// Check if table already exists, otherwise create the table.
-client.query(`SELECT * FROM Todos`).catch((err) =>
-  client.query(
-    `CREATE TABLE IF NOT EXISTS Todos (
-          id SERIAL PRIMARY KEY,
-          task VARCHAR(140) NOT NULL
-      )`
-  )
+client.query(
+  `CREATE TABLE IF NOT EXISTS Todos (
+        id SERIAL PRIMARY KEY,
+        task VARCHAR(${MAX_TODO_LEN}) NOT NULL
+  )`
 )
 
 app
@@ -37,7 +34,7 @@ app
   })
   .post(async (req, res) => {
     const todoItem = req.body.todo
-    if (todoItem) {
+    if (todoItem && todoItem.length <= MAX_TODO_LEN) {
       await client.query("INSERT INTO Todos(task) VALUES($1)", [todoItem])
       res.sendStatus(200)
     } else {
