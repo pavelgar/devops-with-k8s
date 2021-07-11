@@ -18,7 +18,7 @@ spec:
           emptyDir: {}
       containers:
         - name: todo-app
-          image: pavelgar/todo_app:latest
+          image: PROJECT/BACKEND
           volumeMounts:
           - name: todo-volume
             mountPath: /usr/src/app/files

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: todo-app-backend
-          image: pavelgar/todo_app-backend:latest
+          image: PROJECT/FRONTEND
           envFrom:
             - secretRef:
                 name: todo-postgres-pass
