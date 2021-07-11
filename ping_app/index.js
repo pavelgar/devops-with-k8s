@@ -26,13 +26,18 @@ client
 app.get("/", async (req, res) => {
   const { rows } = await client.query(`SELECT n FROM Ping`)
   let pings = rows[0].n
+
+  res.set("Content-type", "text/plain")
   res.send(`pong ${pings}`)
   pings++
+
   await client.query(`UPDATE Ping SET n=$1`, [pings])
 })
 
 app.get("/pongs", async (req, res) => {
   const { rows } = await client.query(`SELECT n FROM Ping`)
+
+  res.set("Content-type", "text/plain")
   res.send("" + rows[0].n)
 })
 
