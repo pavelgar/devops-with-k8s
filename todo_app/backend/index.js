@@ -40,6 +40,7 @@ app
     const todoItem = req.body.todo
     if (todoItem && todoItem.length <= MAX_TODO_LEN) {
       await client.query("INSERT INTO Todos(task) VALUES($1)", [todoItem])
+      console.log("New todo item added\n" + todoItem)
       res.sendStatus(200)
     } else {
       res.sendStatus(401)
