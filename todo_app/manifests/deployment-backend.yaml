@@ -23,3 +23,15 @@ spec:
           envFrom:
             - secretRef:
                 name: todo-postgres-pass
+          readinessProbe:
+            initialDelaySeconds: 10 # Initial delay until the readiness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /
+               port: 3000
+          livenessProbe:
+            initialDelaySeconds: 30 # Initial delay until the liveness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /
+               port: 3000

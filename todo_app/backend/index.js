@@ -26,6 +26,7 @@ client.query(
   )`
 )
 
+// At this point either the database connection has been established or this app has crashed.
 app.get("/", (req, res) => {
   res.sendStatus(200)
 })
