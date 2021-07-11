@@ -4,7 +4,6 @@ metadata:
   namespace: main-application
   name: hashlogger-claim
 spec:
-  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
