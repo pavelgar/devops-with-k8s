@@ -22,7 +22,8 @@ client.connect()
 client.query(
   `CREATE TABLE IF NOT EXISTS Todos (
         id SERIAL PRIMARY KEY,
-        task VARCHAR(${MAX_TODO_LEN}) NOT NULL
+        task VARCHAR(${MAX_TODO_LEN}) NOT NULL,
+        done BOOLEAN DEFAULT false
   )`
 )
 
@@ -35,7 +36,7 @@ app
   .route("/todos")
   .get(async (req, res) => {
     const { rows } = await client.query(`SELECT task FROM Todos`)
-    res.json(rows.map((row) => row.task))
+    res.json(rows)
   })
   .post(async (req, res) => {
     const todoItem = req.body.todo
@@ -44,9 +45,19 @@ app
       console.log("New todo item added\n" + todoItem)
       res.sendStatus(200)
     } else {
-      res.sendStatus(401)
+      res.sendStatus(400)
     }
   })
+
+app.put("/todos/:id", async (req, res) => {
+  const { id } = req.params
+  try {
+    await client.query("UPDATE Todos SET done = true WHERE id = $1", [id])
+    res.sendStatus(200)
+  } catch (error) {
+    res.sendStatus(400)
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`Server started in port ${PORT}`)

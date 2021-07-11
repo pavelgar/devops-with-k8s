@@ -13,6 +13,7 @@ spec:
           serviceName: todo-app-svc
           servicePort: 80
       - path: /todos
+        pathType: Prefix
         backend:
           serviceName: todo-app-backend-svc
           servicePort: 3456
