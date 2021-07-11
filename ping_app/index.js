@@ -23,6 +23,11 @@ client
       .then((res) => client.query("INSERT INTO Ping(n) VALUES($1)", [0]))
   )
 
+// At this point either the database connection has been established or this app has crashed.
+app.get("/healthz", (req, res) => {
+  res.sendStatus(200)
+})
+
 app.get("/pingpong", async (req, res) => {
   const { rows } = await client.query(`SELECT n FROM Ping`)
   let pings = rows[0].n

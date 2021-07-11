@@ -4,7 +4,7 @@ metadata:
   namespace: main-application
   name: ping-dep
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: ping-pong
@@ -16,6 +16,12 @@ spec:
       containers:
         - name: ping-pong
           image: pavelgar/ping-pong:latest
+          readinessProbe:
+            initialDelaySeconds: 10 # Initial delay until the readiness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3000
           resources:
             limits:
               cpu: "100m"

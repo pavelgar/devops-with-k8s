@@ -34,6 +34,12 @@ spec:
 
         - name: hashlogger-frontend
           image: pavelgar/hashlogger-frontend:latest
+          readinessProbe:
+            initialDelaySeconds: 10 # Initial delay until the readiness is tested
+            periodSeconds: 5 # How often to test
+            httpGet:
+               path: /healthz
+               port: 3000
           resources:
             limits:
               cpu: "150m"

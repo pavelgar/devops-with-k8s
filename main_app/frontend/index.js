@@ -23,6 +23,16 @@ app.get("/", async (req, res) => {
   }
 })
 
+// At this point either the database connection has been established or this app has crashed.
+app.get("/healthz", async (req, res) => {
+  const pings = await axios.get("http://ping-svc/pongs")
+  if (pings.status == 200) {
+    res.sendStatus(200)
+  } else {
+    res.sendStatus(500)
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`Server started in port ${PORT}`)
 })
