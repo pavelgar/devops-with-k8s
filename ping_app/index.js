@@ -23,7 +23,7 @@ client
       .then((res) => client.query("INSERT INTO Ping(n) VALUES($1)", [0]))
   )
 
-app.get("/", async (req, res) => {
+app.get("/pingpong", async (req, res) => {
   const { rows } = await client.query(`SELECT n FROM Ping`)
   let pings = rows[0].n
 
@@ -34,7 +34,7 @@ app.get("/", async (req, res) => {
   await client.query(`UPDATE Ping SET n=$1`, [pings])
 })
 
-app.get("/pongs", async (req, res) => {
+app.get("/pingpong/pongs", async (req, res) => {
   const { rows } = await client.query(`SELECT n FROM Ping`)
 
   res.set("Content-type", "text/plain")

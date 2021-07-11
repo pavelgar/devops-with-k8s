@@ -4,7 +4,7 @@ metadata:
   namespace: main-application
   name: hashlogger-svc
 spec:
-  type: ClusterIP
+  type: NodePort
   selector:
     app: hashlogger
   ports:

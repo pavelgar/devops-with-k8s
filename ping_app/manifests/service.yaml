@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: main-application
-  name: ping-service
+  name: ping-svc
 spec:
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: ping-pong
   ports:

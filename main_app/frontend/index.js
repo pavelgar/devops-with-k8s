@@ -14,7 +14,7 @@ const timestampFile = path.join(directory, "timestamp.txt")
 app.get("/", async (req, res) => {
   try {
     const ts = fs.readFileSync(timestampFile, "utf8")
-    const pings = await axios.get("http://ping-service/pongs")
+    const pings = await axios.get("http://ping-svc/pongs")
 
     res.set("Content-type", "text/plain")
     res.send(process.env.MESSAGE + "\n" + ts + ".\nPing / Pongs: " + pings.data)
