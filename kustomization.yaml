@@ -7,7 +7,7 @@ resources:
 - todo_app/manifests/service.yaml
 - todo_app/manifests/service-backend.yaml
 - todo_app/manifests/cronjob.yaml
-- todo_app/manifests/ingress.yaml
+# - todo_app/manifests/ingress.yaml
 images:
 - name: PROJECT/FRONTEND
   newName: pavelgar/todo_app:latest
