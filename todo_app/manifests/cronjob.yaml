@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: todo-application
+  name: daily-task
+spec:
+  schedule: "@daily"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: daily-task
+            image: curlimages/curl:7.77.0
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - -c
+            - curl -X POST -d todo="$(curl -sI https://en.wikipedia.org/wiki/Special:Random | grep location | awk '{print $2}') todo-app-backend-svc:3456/todos
+          restartPolicy: OnFailure
