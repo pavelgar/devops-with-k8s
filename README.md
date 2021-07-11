@@ -46,3 +46,7 @@ Comparison between DBaaS vs DIY
 I chose to stick with the DIY method of running Postgres deployment with PersistentVolumeClaim
 as that's the first thing I learned how to do during this course and I like doing things
 myself as much as reasonably possible.
+
+### Exercise 3.10
+
+![GKE_logs](./docs/GKE_logs.png)
