@@ -22,7 +22,7 @@
           todoList.append(
             ...data.map((d) => {
               let li = document.createElement("li")
-              li.textContent(d)
+              li.textContent = d
               return li
             })
           )
