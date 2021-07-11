@@ -1,0 +1,38 @@
+name: Delete application
+on:
+  delete:
+
+env:
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-north1-b
+  IMAGE: todo-app-dep
+  ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+jobs:
+  delete-environment:
+    name: Delete environment
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ secrets.GKE_PROJECT }}
+
+    - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+
+    - name: Create image name and tag
+      run: echo "::set-env name=IMAGE_WITH_TAG::gcr.io/${{ secrets.GKE_PROJECT }}/$IMAGE:${GITHUB_REF#refs/heads/}-$GITHUB_SHA"
+
+    - name: Set up Kustomize
+      run: |-
+        curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+
+    - name: Delete
+      run: |-
+        ./kustomize edit set image PROJECT/FRONTEND=$IMAGE_WITH_TAG
+        kubectl delete -k .
