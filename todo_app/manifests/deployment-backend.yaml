@@ -16,7 +16,7 @@ spec:
       containers:
         - name: todo-app-backend
           image: PROJECT/BACKEND
-          resource:
+          resources:
             limits:
               cpu: "100m"
               memory: "100Mi"
