@@ -50,3 +50,11 @@ myself as much as reasonably possible.
 ### Exercise 3.10
 
 ![GKE_logs](./docs/GKE_logs.png)
+
+### Exercise 4.03
+
+To count number of pods created by StatefulSets in the "prometheus" namespace:
+
+```
+count(kube_pod_info{created_by_kind="StatefulSet", namespace="prometheus"})
+```
