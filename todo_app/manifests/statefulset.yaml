@@ -6,9 +6,9 @@ metadata:
   labels:
     app: postgres
 spec:
+  type: LoadBalancer
   selector:
     app: postgresapp
-  clusterIP: None
   ports:
   - port: 5432
     name: web
