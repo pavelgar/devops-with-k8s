@@ -8,6 +8,7 @@ spec:
   - http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
           serviceName: todo-app-svc
           servicePort: 80
