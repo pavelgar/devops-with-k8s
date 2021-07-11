@@ -10,7 +10,7 @@ spec:
       - path: /
         backend:
           serviceName: todo-app-svc
-          servicePort: 1234
+          servicePort: 80
       - path: /todos
         backend:
           serviceName: todo-app-backend-svc
