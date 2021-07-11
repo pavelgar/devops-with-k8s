@@ -1,10 +1,10 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-- manifests/deployment.yaml
-- manifests/deployment-backend.yaml
-- manifests/service.yaml
-- manifests/service-backend.yaml
+- todo_app/manifests/deployment.yaml
+- todo_app/manifests/deployment-backend.yaml
+- todo_app/manifests/service.yaml
+- todo_app/manifests/service-backend.yaml
 images:
 - name: PROJECT/FRONTEND
   newName: pavelgar/todo_app:latest
