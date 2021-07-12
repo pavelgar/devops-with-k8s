@@ -57,7 +57,9 @@ const deploymentForDummySiteExists = async (fields) => {
     `/apis/apps/v1/namespaces/${namespace}/deployments`
   )
 
-  return items.find((item) => item.metadata.labels.dummysite === dummysite_name)
+  return items.find(
+    (item) => item?.metadata?.labels?.dummysite === dummysite_name
+  )
 }
 
 const createDeployment = async (fields) => {
