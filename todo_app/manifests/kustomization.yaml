@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- sealedsecret.yaml
+- statefulset.yaml
+- deployment-nats.yaml
+- service-nats.yaml
+- ingress.yaml
+- cronjob.yaml
+images:
+- name: FRONTEND_IMAGE
+  newName: pavelgar/todo_app:latest
+- name: BACKEND_IMAGE
+  newName: pavelgar/todo_app-backend:latest
+- name: BROADCASTER_IMAGE
+  newName: pavelgar/todo_app-broadcaster:latest

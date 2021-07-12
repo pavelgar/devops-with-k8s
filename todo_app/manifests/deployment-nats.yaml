@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: todo-nats
+  namespace: todo-application
   name: todo-broadcaster-dep
 spec:
   replicas: 6
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: broadcaster
-          image: pavelgar/todo_app-broadcaster:latest
+          image: BROADCASTER_IMAGE
           env:
             - name: NATS_URL
               value: nats://my-nats.default:4222
@@ -25,7 +25,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: todo-nats
+  namespace: todo-application
   name: todo-backend-dep
 spec:
   replicas: 1
@@ -39,7 +39,7 @@ spec:
     spec:
       containers:
         - name: todo-backend
-          image: pavelgar/todo_app-backend:latest
+          image: BACKEND_IMAGE
           envFrom:
             - secretRef:
                 name: todo-postgres-pass
@@ -50,7 +50,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: todo-nats
+  namespace: todo-application
   name: todo-frontend-dep
 spec:
   replicas: 1
@@ -64,7 +64,7 @@ spec:
     spec:
       containers:
         - name: todo-frontend
-          image: pavelgar/todo_app-frontend:latest
+          image: FRONTEND_IMAGE
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
