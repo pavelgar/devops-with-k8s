@@ -1,7 +1,7 @@
 apiVersion: batch/v1
-kind: Job
+kind: Deployment
 metadata:
-  name: {{{ job_name }}}
+  name: {{{ dep_name }}}
   labels:
     dummysite: "{{ dummysite_name }}"
     websiteurl: "{{{ websiteurl }}}"

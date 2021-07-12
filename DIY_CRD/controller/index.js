@@ -20,58 +20,58 @@ kc.applyToRequest(opts)
 const client = kc.makeApiClient(k8s.CoreV1Api)
 
 const sendRequestToApi = async (api, method = "get", options = {}) =>
-  new Promise((resolve, reject) =>
+  new Promise((res, rej) =>
     request[method](
       `${kc.getCurrentCluster().server}${api}`,
       { ...opts, ...options, headers: { ...options.headers, ...opts.headers } },
-      (err, res) => (err ? reject(err) : resolve(JSON.parse(res.body)))
+      (err, res) => (err ? rej(err) : res(JSON.parse(res.body)))
     )
   )
 
 const fieldsFromDummySite = (object) => ({
   dummysite_name: object.metadata.name,
   container_name: object.metadata.name,
-  job_name: `${object.metadata.name}-job-${object.spec.websiteurl}`,
+  dep_name: `${object.metadata.name}-dep-${object.spec.websiteurl}`,
   namespace: object.metadata.namespace,
   websiteurl: object.spec.websiteurl,
   image: object.spec.image,
 })
 
-const fieldsFromJob = (object) => ({
+const deploymentFields = (object) => ({
   dummysite_name: object.metadata.labels.dummysite,
   container_name: object.metadata.labels.dummysite,
-  job_name: `${object.metadata.labels.dummysite}-job-${object.metadata.labels.websiteurl}`,
+  dep_name: `${object.metadata.labels.dummysite}-dep-${object.metadata.labels.websiteurl}`,
   namespace: object.metadata.namespace,
   websiteurl: object.metadata.labels.websiteurl,
   image: object.spec.template.spec.containers[0].image,
 })
 
-const getJobYAML = async (fields) => {
-  const deploymentTemplate = await fs.readFile("job.mustache", "utf-8")
+const getDeploymentYAML = async (fields) => {
+  const deploymentTemplate = await fs.readFile("deployment.mustache", "utf-8")
   return mustache.render(deploymentTemplate, fields)
 }
 
-const jobForDummySiteAlreadyExists = async (fields) => {
+const deploymentForDummySiteExists = async (fields) => {
   const { dummysite_name, namespace } = fields
   const { items } = await sendRequestToApi(
-    `/apis/batch/v1/namespaces/${namespace}/jobs`
+    `/apis/batch/v1/namespaces/${namespace}/deployments`
   )
 
   return items.find((item) => item.metadata.labels.dummysite === dummysite_name)
 }
 
-const createJob = async (fields) => {
+const createDeployment = async (fields) => {
   console.log(
-    "Scheduling new job for dummysite",
+    "Scheduling new deployment for dummysite",
     fields.dummysite_name,
     "to namespace",
     fields.namespace
   )
 
-  const yaml = await getJobYAML(fields)
+  const yaml = await getDeploymentYAML(fields)
 
   return sendRequestToApi(
-    `/apis/batch/v1/namespaces/${fields.namespace}/jobs`,
+    `/apis/batch/v1/namespaces/${fields.namespace}/deployments`,
     "post",
     {
       headers: {
@@ -82,14 +82,14 @@ const createJob = async (fields) => {
   )
 }
 
-const removeJob = async ({ namespace, job_name }) => {
+const removeDeployment = async ({ namespace, dep_name }) => {
   const pods = await sendRequestToApi(`/api/v1/namespaces/${namespace}/pods/`)
   pods.items
-    .filter((pod) => pod.metadata.labels["job-name"] === job_name)
+    .filter((pod) => pod.metadata.labels["deployment-name"] === dep_name)
     .forEach((pod) => removePod({ namespace, pod_name: pod.metadata.name }))
 
   return sendRequestToApi(
-    `/apis/batch/v1/namespaces/${namespace}/jobs/${job_name}`,
+    `/apis/batch/v1/namespaces/${namespace}/deployments/${dep_name}`,
     "delete"
   )
 }
@@ -107,32 +107,33 @@ const cleanupForDummySite = async ({ namespace, dummysite_name }) => {
   console.log("Doing cleanup")
   clearTimeout(timeouts[dummysite_name])
 
-  const jobs = await sendRequestToApi(
-    `/apis/batch/v1/namespaces/${namespace}/jobs`
+  const deployments = await sendRequestToApi(
+    `/apis/batch/v1/namespaces/${namespace}/deployments`
   )
-  jobs.items.forEach((job) => {
-    if (!job.metadata.labels.dummysite === dummysite_name) return
-    removeJob({ namespace, job_name: job.metadata.name })
+  deployments.items.forEach((dep) => {
+    if (!dep.metadata.labels.dummysite === dummysite_name) return
+    removeDeployment({ namespace, dep_name: dep.metadata.name })
   })
 }
 
-const rescheduleJob = (jobObject) => {
-  const fields = fieldsFromJob(jobObject)
+const rescheduleDeployment = (deploymentObj) => {
+  const fields = deploymentFields(deploymentObj)
   if (Number(fields.length) <= 1) {
     console.log("DummySite stopped. Removing...")
     return removeDummySite(fields)
   }
 
-  // Save timeout so if the dummysite is suddenly removed we can prevent execution (removing dummysite removes job)
+  // Save timeout so if the dummysite is suddenly removed we can prevent execution
+  // (removing a dummysite removes the deployment)
   timeouts[fields.dummysite_name] = setTimeout(() => {
-    removeJob(fields)
+    removeDeployment(fields)
     const newLength = Number(fields.length) - 1
     const newFields = {
       ...fields,
-      job_name: `${fields.container_name}-job-${newLength}`,
+      dep_name: `${fields.container_name}-dep-${newLength}`,
       length: newLength,
     }
-    createJob(newFields)
+    createDeployment(newFields)
   }, String(fields.websiteurl))
 }
 
@@ -149,8 +150,8 @@ const maintainStatus = async () => {
     const fields = fieldsFromDummySite(object)
 
     if (type === "ADDED") {
-      if (await jobForDummySiteAlreadyExists(fields)) return // Restarting application would create new 0th jobs without this check
-      createJob(fields)
+      if (await deploymentForDummySiteExists(fields)) return
+      createDeployment(fields)
     }
     if (type === "DELETED") cleanupForDummySite(fields)
   })
@@ -164,19 +165,23 @@ const maintainStatus = async () => {
     )
     .pipe(dummysite_stream)
 
-  // Watch Jobs
-  const job_stream = new JSONStream()
+  const deployment_stream = new JSONStream()
 
-  job_stream.on("data", async ({ type, object }) => {
-    if (!object.metadata.labels.dummysite) return // If it's not dummysite job, don't handle it
-    if (type === "DELETED" || object.metadata.deletionTimestamp) return // Don't handle deleted jobs either
+  deployment_stream.on("data", async ({ type, object }) => {
+    // If it's not dummysite deployment, don't handle it
+    if (!object.metadata.labels.dummysite) return
+    // Don't handle deleted deployments either
+    if (type === "DELETED" || object.metadata.deletionTimestamp) return
     if (!object?.status?.succeeded) return
-    rescheduleJob(object)
+    rescheduleDeployment(object)
   })
 
   request
-    .get(`${kc.getCurrentCluster().server}/apis/batch/v1/jobs?watch=true`, opts)
-    .pipe(job_stream)
+    .get(
+      `${kc.getCurrentCluster().server}/apis/batch/v1/deployments?watch=true`,
+      opts
+    )
+    .pipe(deployment_stream)
 }
 
 maintainStatus()
