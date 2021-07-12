@@ -1,0 +1,14 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: pingpong-serverless
+spec:
+  template:
+    metadata:
+      name: pingpong-serverless-v1
+    spec:
+      containers:
+        - image: docker.io/pavelgar/ping-pong:latest
+          env:
+            - name: TARGET
+              value: "DwK"
