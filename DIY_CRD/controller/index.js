@@ -54,7 +54,7 @@ const getDeploymentYAML = async (fields) => {
 const deploymentForDummySiteExists = async (fields) => {
   const { dummysite_name, namespace } = fields
   const { items } = await sendRequestToApi(
-    `/apis/batch/v1/namespaces/${namespace}/deployments`
+    `/apis/apps/v1/namespaces/${namespace}/deployments`
   )
 
   return items.find((item) => item.metadata.labels.dummysite === dummysite_name)
@@ -71,7 +71,7 @@ const createDeployment = async (fields) => {
   const yaml = await getDeploymentYAML(fields)
 
   return sendRequestToApi(
-    `/apis/batch/v1/namespaces/${fields.namespace}/deployments`,
+    `/apis/apps/v1/namespaces/${fields.namespace}/deployments`,
     "post",
     {
       headers: {
@@ -89,7 +89,7 @@ const removeDeployment = async ({ namespace, dep_name }) => {
     .forEach((pod) => removePod({ namespace, pod_name: pod.metadata.name }))
 
   return sendRequestToApi(
-    `/apis/batch/v1/namespaces/${namespace}/deployments/${dep_name}`,
+    `/apis/apps/v1/namespaces/${namespace}/deployments/${dep_name}`,
     "delete"
   )
 }
@@ -108,7 +108,7 @@ const cleanupForDummySite = async ({ namespace, dummysite_name }) => {
   clearTimeout(timeouts[dummysite_name])
 
   const deployments = await sendRequestToApi(
-    `/apis/batch/v1/namespaces/${namespace}/deployments`
+    `/apis/apps/v1/namespaces/${namespace}/deployments`
   )
   deployments.items.forEach((dep) => {
     if (!dep.metadata.labels.dummysite === dummysite_name) return
@@ -178,7 +178,7 @@ const maintainStatus = async () => {
 
   request
     .get(
-      `${kc.getCurrentCluster().server}/apis/batch/v1/deployments?watch=true`,
+      `${kc.getCurrentCluster().server}/apis/apps/v1/deployments?watch=true`,
       opts
     )
     .pipe(deployment_stream)
