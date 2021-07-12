@@ -8,9 +8,12 @@ resources:
 - ingress.yaml
 - cronjob.yaml
 images:
-- name: FRONTEND_IMAGE
-  newName: pavelgar/todo_app:latest
 - name: BACKEND_IMAGE
-  newName: pavelgar/todo_app-backend:latest
+  newName: pavelgar/todo_app-backend
+  newTag: 4353a48310f400a81dccebfab67bcf5abb66009d
 - name: BROADCASTER_IMAGE
-  newName: pavelgar/todo_app-broadcaster:latest
+  newName: pavelgar/todo_app-broadcaster
+  newTag: 4353a48310f400a81dccebfab67bcf5abb66009d
+- name: FRONTEND_IMAGE
+  newName: pavelgar/todo_app
+  newTag: 4353a48310f400a81dccebfab67bcf5abb66009d
