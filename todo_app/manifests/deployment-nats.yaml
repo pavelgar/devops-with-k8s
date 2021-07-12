@@ -18,7 +18,7 @@ spec:
           image: pavelgar/todo_app-broadcaster:latest
           env:
             - name: NATS_URL
-              value: nats://my-nats:4222
+              value: nats://my-nats.default:4222
             - name: GENERIC_URL
               value: example.com/api
 ---
@@ -40,9 +40,12 @@ spec:
       containers:
         - name: todo-backend
           image: pavelgar/todo_app-backend:latest
+          envFrom:
+            - secretRef:
+                name: todo-postgres-pass
           env:
             - name: NATS_URL
-              value: nats://my-nats:4222
+              value: nats://my-nats.default:4222
 ---
 apiVersion: apps/v1
 kind: Deployment
