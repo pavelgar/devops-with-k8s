@@ -169,6 +169,7 @@ const maintainStatus = async () => {
 
   deployment_stream.on("data", async ({ type, object }) => {
     // If it's not dummysite deployment, don't handle it
+    console.log(object)
     if (!object.metadata.labels.dummysite) return
     // Don't handle deleted deployments either
     if (type === "DELETED" || object.metadata.deletionTimestamp) return
