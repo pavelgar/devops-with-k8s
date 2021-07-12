@@ -295,3 +295,16 @@ namespace "test" deleted
 
 ~ took 52s
 ```
+
+### Exercise 5.04
+
+Rancher is better than OpenShift because:
+
+- Rancher tries to support Kubernetes (and docker) instead of just building on top of it.
+  This gives more flexibility and doesn't force you into the dreaded vendor lock-in.
+  This is a big problem of OpenShift which is developed by RedHat.
+- Rancher makes it extremely easy and fast to deploy and manage applications unlike
+  OpenShift which seems to require huge amount of knowledge of their specific ecosystem
+  before a deployment can be made.
+- Rancher supports open-source projects related to Kubernetes and adheres much better
+  to Kubernetes and cloud best practices.
