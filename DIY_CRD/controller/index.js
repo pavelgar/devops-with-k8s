@@ -113,30 +113,9 @@ const cleanupForDummySite = async ({ namespace, dummysite_name }) => {
     `/apis/apps/v1/namespaces/${namespace}/deployments`
   )
   deployments.items.forEach((dep) => {
-    if (!dep.metadata.labels.dummysite === dummysite_name) return
+    if (!dep?.metadata?.labels?.dummysite === dummysite_name) return
     removeDeployment({ namespace, dep_name: dep.metadata.name })
   })
-}
-
-const rescheduleDeployment = (deploymentObj) => {
-  const fields = deploymentFields(deploymentObj)
-  if (Number(fields.length) <= 1) {
-    console.log("DummySite stopped. Removing...")
-    return removeDummySite(fields)
-  }
-
-  // Save timeout so if the dummysite is suddenly removed we can prevent execution
-  // (removing a dummysite removes the deployment)
-  timeouts[fields.dummysite_name] = setTimeout(() => {
-    removeDeployment(fields)
-    const newLength = Number(fields.length) - 1
-    const newFields = {
-      ...fields,
-      dep_name: `${fields.container_name}-dep-${newLength}`,
-      length: newLength,
-    }
-    createDeployment(newFields)
-  }, String(fields.websiteurl))
 }
 
 const maintainStatus = async () => {
@@ -171,12 +150,29 @@ const maintainStatus = async () => {
 
   deployment_stream.on("data", async ({ type, object }) => {
     // If it's not dummysite deployment, don't handle it
-    console.log(object)
     if (!object?.metadata?.labels?.dummysite) return
     // Don't handle deleted deployments either
     if (type === "DELETED" || object.metadata.deletionTimestamp) return
     if (!object?.status?.succeeded) return
-    rescheduleDeployment(object)
+
+    const fields = deploymentFields(object)
+    if (Number(fields.length) <= 1) {
+      console.log("DummySite stopped. Removing...")
+      return removeDummySite(fields)
+    }
+
+    // Save timeout, so if the dummysite is suddenly removed we can prevent execution
+    // (removing a dummysite removes the deployment)
+    timeouts[fields.dummysite_name] = setTimeout(() => {
+      removeDeployment(fields)
+      const newLength = Number(fields.length) - 1
+      const newFields = {
+        ...fields,
+        dep_name: `${fields.container_name}-dep-${newLength}`,
+        length: newLength,
+      }
+      createDeployment(newFields)
+    }, 20)
   })
 
   request
