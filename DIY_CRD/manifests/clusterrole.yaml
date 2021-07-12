@@ -8,10 +8,10 @@ rules:
   # objects is "pods"
   resources: ["pods"]
   verbs: ["get", "list", "delete"]
-- apiGroups: ["batch"]
-  # at the HTTP level, the name of the resource for accessing Job
+- apiGroups: ["apps"]
+  # at the HTTP level, the name of the resource for accessing Deployment
   # objects is "jobs"
-  resources: ["jobs"]
+  resources: ["deployments"]
   verbs: ["get", "list", "watch", "create", "delete"]
 - apiGroups: ["stable.dwk"]
   resources: ["dummysites"]

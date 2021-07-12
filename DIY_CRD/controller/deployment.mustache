@@ -2,14 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{{ dep_name }}}
-  labels:
-    dummysite: "{{ dummysite_name }}"
-    websiteurl: "{{{ websiteurl }}}"
 spec:
+  selector:
+    matchLabels:
+      app: {{{ container_name }}}
   template:
+    metadata:
+      labels:
+        app: {{{ container_name }}}
+        dummysite: {{ dummysite_name }}
+        websiteurl: {{{ websiteurl }}}
     spec:
       containers:
       - name: {{{ container_name }}}
         image: {{{ image }}}
         args: ["{{{ websiteurl }}}"]
-      restartPolicy: Never
