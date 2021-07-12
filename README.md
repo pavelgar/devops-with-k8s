@@ -308,3 +308,34 @@ Rancher is better than OpenShift because:
   before a deployment can be made.
 - Rancher supports open-source projects related to Kubernetes and adheres much better
   to Kubernetes and cloud best practices.
+
+### Exercise 5.06
+
+Things I've used outside of this course:
+
+- MariaDB, MongoDB, MySQL, Neo4j, PostgreSQL in my hobby, school and work projects. For example, I've used MongoDB during the FullStackOpen course and PostgreSQL during this course when the ping and TODO apps needed a database.
+- Gradle as a build system a long time ago for some university course that had a Java project.
+- Podman on my home PC as it seems to be the way forward for Docker.
+- CircleCI during the Software Development Project course in the university.
+- GitLab and OpenStack I am using at work
+- HAProxy and NGINX in some of my personal projects.
+- Containerd is what's enabling docker
+
+New things I've used during the course:
+
+- Kubernetes was obviously used extensively throughout the course
+- HELM was first used in part 2.5 when I had to setup Prometheus.
+  I'd like to learn more about how to create my own HELM charts.
+- etcd was indirectly used by some of the premade applications I installed during the course.
+  At a high level, I know how it works, but still don't know in what use cases it's useful.
+- Traefik was indirectly used for load balancing of the k3d cluster.
+  I have no idea how to configure it though.
+- Flannel was indirectly used at some point of the course but I don't remember where or how.
+  The only thing I know is that it allows for easy mesh configuration of L3 network in K8s.
+- k3s was also indirectly used when I installed it using k3d.
+  It's a lightweight version of K8s.
+- GKE was used throught part 3 of the course.
+- Grafana was used to create dashboards for the monitoring done by Prometheus and Loki.
+  I don't really know how Prometheus nor Loki work and have very limited experience with Grafana.
+- Knative was briefly introduced during part 5 where I just installed it and ran some serverless applications. I don't really know how it works still.
+- NATS is cloud-native messaging system which I used to send and receive messages between microservices during part 4.2.
