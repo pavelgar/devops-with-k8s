@@ -10,10 +10,10 @@ resources:
 images:
 - name: BACKEND_IMAGE
   newName: pavelgar/todo_app-backend
-  newTag: 4353a48310f400a81dccebfab67bcf5abb66009d
+  newTag: e4ed5634d2bdfa5f3188f181501daf1cb67f36dc
 - name: BROADCASTER_IMAGE
   newName: pavelgar/todo_app-broadcaster
-  newTag: 4353a48310f400a81dccebfab67bcf5abb66009d
+  newTag: e4ed5634d2bdfa5f3188f181501daf1cb67f36dc
 - name: FRONTEND_IMAGE
   newName: pavelgar/todo_app
-  newTag: 4353a48310f400a81dccebfab67bcf5abb66009d
+  newTag: e4ed5634d2bdfa5f3188f181501daf1cb67f36dc
