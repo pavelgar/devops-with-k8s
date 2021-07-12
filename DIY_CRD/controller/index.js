@@ -20,11 +20,11 @@ kc.applyToRequest(opts)
 const client = kc.makeApiClient(k8s.CoreV1Api)
 
 const sendRequestToApi = async (api, method = "get", options = {}) =>
-  new Promise((res, rej) =>
+  new Promise((resolve, reject) =>
     request[method](
       `${kc.getCurrentCluster().server}${api}`,
       { ...opts, ...options, headers: { ...options.headers, ...opts.headers } },
-      (err, res) => (err ? rej(err) : res(JSON.parse(res.body)))
+      (err, res) => (err ? reject(err) : resolve(JSON.parse(res.body)))
     )
   )
 
